@@ -11,11 +11,14 @@
            <script type="text/python">
              from browser import document
              from browser.html import H1
-             from formGET import cadastro_pessoa,get, get_all_students
+             from formGET import cadastro_pessoa,get, get_all_students, delete_student, get_courses, add_pessoa_curso
              document <= H1('Cadastro de Pessoas')
              document <= cadastro_pessoa()
              get()
              get_all_students()
+             delete_student()
+             get_courses()
+             add_pessoa_curso()
            </script>
            <form id="meu-form" action="#" method="get" target="_blank">
              </form>

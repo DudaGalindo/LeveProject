@@ -32,21 +32,21 @@ cursos = api_cursos()
 def api_all():
     return jsonify(cursos)
 
-@app.route('/alunos/update', methods=['GET'])
+@app.route('/pessoas/update', methods=['GET'])
 def update_person():
 
     if 'id' in request.args:
         id = request.args['id']
     if 'Nome' in request.args:
         name = request.args['Nome']
-    else: return "Error: Alumn name not provided. Please specify alumn name."
+    else: return "Error: Nome nao especificado. Por favor, especifique o nome."
     if 'Telefone' in request.args:
         phone = str(request.args['Telefone'])
-    else: return "Error: Alumn phone number not provided. Please specify alumn phone number."
+    else: return "Error: Numero de telefone nao especificado. Por favor, especifique o numero de telefone."
     if 'CPF' in request.args:
         CPF = str(request.args['CPF'])
 
-    sql = ("UPDATE students SET name=%s, phone=%s, CPF=%s WHERE id=%s ")
+    sql = ("UPDATE pessoas SET name=%s, phone=%s, CPF=%s WHERE id=%s ")
     data = (name, phone, CPF, id)
     mysqldb = mysql.connect(host = "localhost",
                             user = "maria",
@@ -55,11 +55,11 @@ def update_person():
     mycursor = mysqldb.cursor() #cursor() method create a cursor object
     mycursor.execute(sql, data)
     mysqldb.commit()
-    resp = jsonify('User updated successfully!')
+    resp = jsonify('Dados atualizados com sucesso!')
     resp.status_code = 200
     return resp
 
-@app.route('/alunos/all')
+@app.route('/pessoas/all')
 def users():
     mysqldb = mysql.connect(host = "localhost",
                             user = "maria",
@@ -67,13 +67,13 @@ def users():
                             database = "datacamp") #established connection between your database
     mycursor = mysqldb.cursor() #cursor() method create a cursor object
 
-    mycursor.execute("SELECT * FROM students")
+    mycursor.execute("SELECT * FROM pessoas")
     rows = mycursor.fetchall()
     resp = jsonify(rows)
     resp.status_code = 200
     return resp
 
-@app.route('/alunos/add', methods=['GET'])
+@app.route('/pessoas/add', methods=['GET'])
 def add_person():
     # Check if an ID or course name was provided as part of the URL.
     # If ID is provided, check if it exists as part of our database, if it does,
@@ -87,27 +87,27 @@ def add_person():
 
     if 'Nome' in request.args:
         name = request.args['Nome']
-    else: return "Error: Student name not provided. Please specify student name."
+    else: return "Error: Nome nao foi dado. Por favor, digite o nome."
     if 'Telefone' in request.args:
         phone = str(request.args['Telefone'])
-    else: return "Error: Student phone number not provided. Please specify student phone number."
+    else: return "Error: Numero de telefone nao foi dado. Por favor, digite o numero de telefone."
     if 'CPF' in request.args:
         CPF = str(request.args['CPF'])
-    else: return "Error: Student CPF not provided. Please specify student CPF."
+    else: return "Error: CPF nao foi dado. Por favor, digite o CPF."
 
     try:
         #sql = "DROP TABLE students"
         #mycursor.execute(sql)
-        mycursor.execute("CREATE TABLE students (id INT AUTO_INCREMENT PRIMARY KEY, \
+        mycursor.execute("CREATE TABLE pessoas (id INT AUTO_INCREMENT PRIMARY KEY, \
                             name VARCHAR(255), phone VARCHAR(255), CPF VARCHAR(255))")
     except:
-        mycursor.execute("SELECT * FROM students")
+        mycursor.execute("SELECT * FROM pessoas")
         rows = mycursor.fetchall()
         for row in rows:
             if CPF in row:
-                return "Error: Student already in our database."
+                return "Error: Pessoa ja cadastrada na nossa base de dados."
 
-    sql = ("INSERT INTO students (name, phone, CPF) VALUES (%s, %s, %s)")
+    sql = ("INSERT INTO pessoas (name, phone, CPF) VALUES (%s, %s, %s)")
     val = (name, phone, CPF)
     mycursor.execute(sql, val)
     mysqldb.commit()
@@ -122,22 +122,20 @@ def add_person():
 
     # Use the jsonify function from Flask to convert our list of
     # Python dictionaries to the JSON format.
-    return jsonify(results)
+    return jsonify("Pessoa cadastrada com sucesso.")
 
-@app.route('/alunos/curso', methods= ['GET'])
+@app.route('/pessoas/curso', methods= ['GET'])
 def add_student_course():
     if 'id' in request.args:
         student_identification = int(request.args['id'])
-    elif 'CPF' in request.args:
-        student_identification = request.args['CPF']
-    else: return "Error: Student ID or CPF to add course not provided. Please specify at least one."
+    else: return "Error: ID da pessoa nao foi dado. Por favor, especifique o ID da pessoa que quer deletar."
     if 'Curso' in request.args:
         course = request.args['Curso']
         course_id = course
     elif 'Matricula' in request.args:
-        id = int(request.args['Matricula'])
-        course_id = id
-    else: return "Error: Course name or Matricula Number not provided. Please specify at least one."
+        course = request.args['Matricula']
+        course_id = course
+    else: return "Error: Curso nao foi dado. Por favor, especifique o curso."
 
     mysqldb = mysql.connect(host = "localhost",
                             user = "maria",
@@ -151,14 +149,14 @@ def add_student_course():
                         phone VARCHAR(255), CPF VARCHAR(255), curso VARCHAR(255))")
     except: pass
 
-    mycursor.execute("SELECT * FROM students")
+    mycursor.execute("SELECT * FROM pessoas")
     rows = mycursor.fetchall()
     verify = False
     for row in rows:
         if student_identification in row:
             verify = True
             id, name, phone, CPF = row
-    if not verify: return "Error: Student is not in our database."
+    if not verify: return "Error: Pessoa nao existe na nossa base de dados."
 
     verify = False
     aux = dict()
@@ -168,18 +166,17 @@ def add_student_course():
     aux['CPF'] = CPF
     results = []
     for curso in cursos:
-        try:
-            if curso['Numero de Matricula'] == course_id:
-                aux['curso'] = curso['Nome']
-                verify = True
 
-        except:
-            if curso['Nome'] == course_id:
-                aux['Numero de Matricula'] = curso['Numero de Matricula']
-                verify = True
+        if curso['Numero de Matricula'] == course_id: #not working
+            aux['curso'] = curso['Nome']
+            verify = True
+
+        if curso['Nome'] == course_id:
+            aux['Curso'] = curso['Nome']
+            verify = True
 
     if not verify:
-        return "Error: Course name or Matricula Number provided is not ir our database. Please try again."
+        return "Error: Curso ou Numero de Matricula nao existem na nossa base de dados. Por favor, tente novamente."
     results.append(aux)
 
     sql_join = ("INSERT INTO conection (name, phone, CPF, curso) VALUES (%s, %s, %s, %s)")
@@ -189,29 +186,29 @@ def add_student_course():
     mysqldb.close()
     return jsonify(results)
 
-@app.route('/alunos/delete', methods= ['GET'])
+@app.route('/pessoas/delete', methods= ['GET'])
 def delete_student():
     if 'id' in request.args:
         id = int(request.args['id'])
-    else: return "Error: Student ID not provided. Please give the student ID."
+    else: return "Error: ID da pessoa nao foi especificado. Por favor, especifique o ID."
     mysqldb = mysql.connect(host = "localhost",
                             user = "maria",
                             password = "hello12345",
                             database = "datacamp") #established connection between your database
     mycursor = mysqldb.cursor() #cursor() method create a cursor object
-    mycursor.execute("SELECT * FROM students")
+    mycursor.execute("SELECT * FROM pessoas")
     rows = mycursor.fetchall()
     verify = False
     for row in rows:
         if id in row:
             verify = True
-            mycursor.execute("DELETE FROM students WHERE id=%s", (id,))
+            mycursor.execute("DELETE FROM pessoas WHERE id=%s", (id,))
             mycursor.execute("DELETE FROM conection WHERE id=%s", (id,))
             mysqldb.commit()
             resp = jsonify('User deleted successfully!')
             resp.status_code = 200
             mysqldb.close()
-    if not verify: return "Student ID does not exists"
+    if not verify: return "ID nao existe. Tente novamente."
     return resp
 @app.route("/", methods=["GET"])
 def home():

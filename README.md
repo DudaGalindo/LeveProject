@@ -1,18 +1,17 @@
 # LeveProject
-In order to make this project work, you have to activate the virtual enviroment for the backend part and have installed mysql and flask in your machine.
-When entering the main file from the command line do: cd ./myproject
-After that, you will need to activate the virtual enviroment, typing in terminal: source venv/bin/activate
-To run the backend just type: python3 project.py;
-In order to run the frontend, you will have to open in another terminal, the folder called Brython and then write in terminal the following:
-python3 -m http.server;
-After that, open in your browser: localhost:8000/front.html;
-This is the frontend page.
-When a student is added, press the first button. If you want to add more students, return to localhost:8000/front.html
-If you want to see all students in your database, you will need to press the last button in "Cadastrar Pessoas". This will redirect you to another url.
-If you want to delete a student, give the person ID in the requested area, and press the button bellow it.
-If you want to attribute a student to a course, write in the last section the student ID and their course.
+Para fazer esse projeto funcionar, você deve ativar o ambiente virtual para o "backend" e ter instalado as bibliotecas do mysql e do flask.
+Quando entrar no arquivo principal do projeto, na linha de comando do seu terminal escreva: cd ./myproject;
+Após isso, você precisará ativar o ambiente virtual, escrevendo no terminal o seguinte: source venv/bin/activate.
+Para rodar o backend escreva: python3 project.py;
+Para rodar o frontend, você deverá abrir outro terminal e entrar na pasta Brython, seguindo: cd ./Brython. Após isso, digite: python3 -m http.server;
+Depois, abra uma aba no navegador e escreva: localhost:8000/front.html;
+Isso abrirá a página do frontend.
+Quando uma pessoa for adicionada, após preencher todas as informações, pressione o primeiro botão. Esse botão vai lhe redirecionar pra uma página mostrando que o estudante foi adicionado. Essa operação de redirecionamento é meramente ilustrativa, pra mostrar que funcionou. Se quiser fazer outras operações, retorne para o localhost: localhost:8000/front.html;
+Se você quiser ver todos os estudantes na sua base de dados, pressione o último botão em "Cadastrar Pessoas". Isto vai lhe redirecionar a outra url, lhe mostrando a lista de todos as pessoas existentes no banco de dados.
+Se você quer deletar um estudante, digite  o ID da pessoa na área requisitada (esse ID é o que foi gerado durante o cadastro) e pressione o botão logo abaixo.
+Se você quiser atribuir um curso a uma pessoa, escreva na última seção da página o ID do estudante e o curso. Isso irá lhe redirecionar à outra página, confirmando o funcionamento do processo.
 
-For other cases, do the following (only backend part):
-If you want to update a student information, type in your browser:
+Para outros casos, faça o seguinte (apenas para o backend):
+Se você quer atualizar algum dado da pessoa, escreve no seu navegador:
 http://127.0.0.1:5000/alunos/update?id=TYPEID&Nome=TYPENAME&Telefone=TYPEPHONE&CPF=TYPECPF
-for a id that exists in the database and corresponds to the student id from which your want to update the information.
+o ID deve existir na sua base de dados e corresponder ao estudante que você quer atualizar os dados. Para tanto, em TYPENAME, TYPEPHONE e TYPECPF, atualize com o nome, o telefone e o CPF do estudante.
